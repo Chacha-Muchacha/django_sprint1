@@ -45,6 +45,9 @@ posts = [
 ]
 
 
+posts_data = {post['id']: post for post in posts}
+
+
 def index(request):
     template = 'blog/index.html'
     context = {'post_list': posts[::-1]}
@@ -52,13 +55,13 @@ def index(request):
     return render(request, template, context)
 
 
-def post_detail(request, id):
+def post_detail(request, post_id):
     template = 'blog/detail.html'
 
-    try:
-        post = posts[id]
-    except IndexError:
-        raise Http404("Post does not exist")
+    if post_id not in posts_data:
+        raise Http404(f"Post with id={post_id} not found")
+
+    post = posts_data[post_id]
 
     context = {'post': post}
     return render(request, template, context)
